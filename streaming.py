@@ -1,6 +1,8 @@
 import requests
 import re
 
+# password is F3RN3T4NDC0C4C0L4
+
 class Password:
 
     def __init__( self ):
@@ -19,9 +21,6 @@ class Password:
             return True
 
         self.password[index] = letter
-
-        if len(self.password) > 50:
-            return True
 
         return False
 
