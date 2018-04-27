@@ -1,13 +1,6 @@
 from websocket import create_connection
 
-def calculateNextStep ( result ):
-
-    nextstep = '0'
-    lines = result.splitlines()
-
-    if len(lines) == 3:
-
-        line1,line2,line3 = result.splitlines()
+def getCandidates( line2 ):
 
         # 1. get absolute index of next line
         abs_index     = 0
@@ -20,20 +13,40 @@ def calculateNextStep ( result ):
                 start = i
                 while line2[start] == ' ':
                     start += 1
-                if ( start - i ) > mx_size:
-                    if empty_spaces: empty_spaces.pop()
-                    empty_spaces.append((int(i),int(start)))
-                    mx_size = start - i
+                empty_spaces.append((int(i),int(start)))
+                mx_size = start - i
                 i = start
             else:
                 i += 1
+        return empty_spaces
 
-        abs_index =  ( empty_spaces[0][0] + empty_spaces[0][1]) // 2
+def candidateSelection ( i , candidates ):
 
-        # 2. convert current index to index found above
+    if len(candidates) == 1:
+        return (candidates[0][0] + candidates[0][1])//2
+
+    # multiple options to choose from
+    # 1 selection is largest length but "V" must be able to cross, means no obstacle while making the move
+    for x,y in candidates:
+        if x <= i or i <= y:
+            return (x+y)//2
+
+
+def calculateNextStep ( result ):
+
+    nextstep = '0'
+    lines = result.splitlines()
+
+    if len(lines) == 3:
+
+        line1,line2,line3 = result.splitlines()
 
         current_index = line1.find("V")
 
+        candidates = getCandidates( line2 )
+        abs_index  = candidateSelection( current_index, candidates )
+
+        # 2. convert current index to index found above
         if current_index < abs_index:
             nextstep = str(abs_index - current_index)
         else:
